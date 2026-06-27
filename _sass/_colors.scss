@@ -1,0 +1,11 @@
+// Colours — custom palette (overrides Garth's default yellow)
+// Light mode. Dark mode lives in assets/styles.scss.
+$bodyColour: #36352f;
+$headingColour: darken($bodyColour, 5%);
+$linkColour: #2f8f83;                       // muted teal accent
+$hoverColour: darken($linkColour, 10%);
+$captionColour: lighten($headingColour, 45%);
+$white: #fff;
+
+$backgroundColour: #f3f1ea;                  // soft warm paper, not yellow
+$codeBackgroundColour: darken($backgroundColour, 5%);

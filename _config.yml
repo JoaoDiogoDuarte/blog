@@ -4,21 +4,42 @@ description: >-
   Stuff I liked.
 baseurl: ""
 url: "https://blog.diogoduarte.pt"
-twitter_username:
 github_username: joaodiogoduarte
 
-remote_theme: "mmistakes/so-simple-theme@3.2.0"
-skin: "/assets/css/skins/default.css"
-locale: en-US
+# Garth theme (https://github.com/daviddarnes/garth)
+remote_theme: daviddarnes/garth
+logo: "/assets/logo.svg"
+lang: en-GB
 date_format: "%-d %B %Y"
-read_time: true
 
 author:
   name: "João Diogo Duarte"
 
+permalink: pretty
+excerpt_separator: <!-- more -->
+
 paginate: 5
 paginate_path: /page:num/
-tag_archive_path: "/tags/#"
+
+collections:
+  posts:
+    title: "Things I liked."
+    output: true
+    description: "Stuff I liked."
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: pages
+    values:
+      layout: page
+  -
+    scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
 
 plugins:
   - jekyll-remote-theme

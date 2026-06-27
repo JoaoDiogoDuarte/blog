@@ -1,0 +1,64 @@
+---
+title: false
+---
+
+@import "garth";
+
+// Drop the highlighted bar behind the logo/nav — let it sit on the page.
+.header { background: none; }
+
+// Justify body copy.
+.typeset p {
+  text-align: justify;
+  hyphens: auto;
+}
+
+// Dark mode — mirrors the light palette with the same teal accent.
+@media (prefers-color-scheme: dark) {
+  $dark-bg: #181a1b;
+  $dark-code: #222527;
+  $dark-body: #c9c6bf;
+  $dark-heading: #e8e5dd;
+  $dark-link: #5fc9bb;
+  $dark-hover: #8fd9cf;
+  $dark-caption: #8c8a83;
+  $dark-border: #2c2f30;
+
+  body {
+    background: $dark-bg;
+    color: $dark-body;
+  }
+
+  .footer { border-top-color: $dark-border; }
+  .small,
+  .nav--paginator { color: $dark-caption; }
+
+  a {
+    color: $dark-link;
+    &:hover,
+    &:active,
+    &:focus { color: $dark-hover; }
+  }
+
+  .typeset {
+    h1, h2, h3, h4, h5, h6 { color: $dark-heading; }
+    // Match the theme's own selector so the thin underline (background-size)
+    // is inherited; only re-color the line and re-mask it for the dark bg.
+    // Headings deliberately get no underline — that was the weird block.
+    p a, li a {
+      background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, lighten($dark-link, 15%) 50%);
+      text-shadow: 0.1rem 0 $dark-bg,
+                   0.15rem 0 $dark-bg,
+                  -0.1rem 0 $dark-bg,
+                  -0.15rem 0 $dark-bg;
+    }
+    code, pre { background-color: $dark-code; }
+    blockquote { border-left-color: $dark-link; }
+    .caption { color: $dark-caption; }
+  }
+
+  ::selection {
+    background: $dark-heading;
+    color: $dark-bg;
+  }
+}
