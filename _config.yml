@@ -1,0 +1,28 @@
+title: Things I liked.
+email: joao@diogoduarte.pt
+description: >-
+  Stuff I liked.
+baseurl: ""
+url: "https://blog.diogoduarte.pt"
+twitter_username:
+github_username: joaodiogoduarte
+
+remote_theme: "mmistakes/so-simple-theme@3.2.0"
+skin: "/assets/css/skins/default.css"
+locale: en-US
+date_format: "%-d %B %Y"
+read_time: true
+
+author:
+  name: "João Diogo Duarte"
+
+paginate: 5
+paginate_path: /page:num/
+tag_archive_path: "/tags/#"
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-paginate
+  - jekyll-seo-tag
+  - jekyll-sitemap
