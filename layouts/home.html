@@ -1,0 +1,12 @@
+{{ define "main" }}
+{{- range (where site.RegularPages "Section" "posts").ByDate.Reverse }}
+<article class="preview">
+  <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+  <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
+  <div class="summary">{{ .Summary }}</div>
+  <a class="read-more" href="{{ .RelPermalink }}">Read more →</a>
+</article>
+{{- else }}
+<p>No posts yet.</p>
+{{- end }}
+{{ end }}

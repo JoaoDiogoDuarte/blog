@@ -1,0 +1,19 @@
+baseURL = "https://diogoduarte.pt/blog/"
+locale = "en"
+title = "João Diogo Duarte · Blog"
+disableKinds = ["taxonomy", "term"]
+
+[params]
+  author = "João Diogo Duarte"
+  homepage = "https://diogoduarte.pt/"
+
+[permalinks]
+  posts = "/:slug/"
+
+# Leave $...$ and $$...$$ untouched by Markdown so the math render hook
+# (layouts/_markup/render-passthrough.html) can turn them into KaTeX at build time.
+[markup.goldmark.extensions.passthrough]
+  enable = true
+  [markup.goldmark.extensions.passthrough.delimiters]
+    block = [['\[', '\]'], ['$$', '$$']]
+    inline = [['\(', '\)'], ['$', '$']]

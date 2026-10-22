@@ -1,0 +1,87 @@
+:root {
+  --fg: #1f2328;
+  --muted: #656d76;
+  --bg: #fdfdfc;
+  --link: #0b5cad;
+  --rule: #d8dee4;
+  --quote: #f3f4f6;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #e6edf3;
+    --muted: #9198a1;
+    --bg: #111418;
+    --link: #6cb6ff;
+    --rule: #30363d;
+    --quote: #1b1f24;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  max-width: 47rem;
+  padding: 1.5rem 1rem 3rem;
+  background: var(--bg);
+  color: var(--fg);
+  font: 1.125rem/1.65 Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+}
+
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--rule);
+  font-family: system-ui, sans-serif;
+  font-size: 0.95rem;
+}
+.site-title { color: var(--fg); font-weight: 600; text-decoration: none; }
+
+h1, h2, h3 { line-height: 1.25; }
+h1 { font-size: 1.9rem; margin: 0 0 0.25rem; }
+.post h2 { font-size: 1.4rem; margin-top: 2.25rem; }
+.post h3 { font-size: 1.15rem; margin-top: 1.75rem; }
+
+time { display: block; color: var(--muted); font-family: system-ui, sans-serif; font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+.preview { padding-bottom: 1.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--rule); }
+.preview:last-child { border-bottom: 0; }
+.preview h2 { font-size: 1.5rem; margin: 0 0 0.25rem; }
+.preview h2 a { color: var(--fg); text-decoration: none; }
+.preview h2 a:hover { text-decoration: underline; }
+.preview time { margin-bottom: 0.75rem; }
+.read-more { font-family: system-ui, sans-serif; font-size: 0.95rem; }
+
+blockquote {
+  margin: 1.25rem 0;
+  padding: 0.5rem 1rem;
+  border-left: 3px solid var(--rule);
+  background: var(--quote);
+  font-style: italic;
+}
+blockquote p { margin: 0.25rem 0; }
+
+/* Wide equations scroll sideways instead of overflowing on phones. */
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.25rem 0; }
+.katex { font-size: 1.05em; }
+
+ul { padding-left: 1.25rem; }
+li { margin: 0.35rem 0; }
+
+.back { margin-top: 3rem; font-family: system-ui, sans-serif; font-size: 0.95rem; }
+
+.site-footer {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-family: system-ui, sans-serif;
+  font-size: 0.85rem;
+}
+.site-footer a { color: var(--muted); }
