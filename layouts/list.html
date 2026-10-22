@@ -1,11 +1,13 @@
 {{ define "main" }}
-{{- range (where site.RegularPages "Section" "posts").ByDate.Reverse }}
-<article class="preview">
-  <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-  <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
-  <div class="summary">{{ .Summary }}</div>
-  <a class="read-more" href="{{ .RelPermalink }}">Read more →</a>
-</article>
+<h2>Blog</h2>
+{{- range $i, $p := (where site.RegularPages "Section" "posts").ByDate.Reverse }}
+{{- if $i }}<hr class="between">{{ end }}
+<div class="preview">
+  <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+  <p class="date"><i>{{ .Date.Format "2 January 2006" }}</i></p>
+  {{ .Summary }}
+  <p><a href="{{ .RelPermalink }}">Read more...</a></p>
+</div>
 {{- else }}
 <p>No posts yet.</p>
 {{- end }}

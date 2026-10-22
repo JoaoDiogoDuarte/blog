@@ -16,15 +16,18 @@
   {{- end }}
 </head>
 <body>
-  <header class="site-header">
-    <a class="site-title" href="{{ "/" | relURL }}">{{ site.Title }}</a>
-    <nav><a href="{{ site.Params.homepage }}">About me</a></nav>
-  </header>
-  <main>
-    {{ block "main" . }}{{ end }}
-  </main>
-  <footer class="site-footer">
-    © {{ now.Year }} {{ site.Params.author }} · <a href="{{ "index.xml" | relURL }}">RSS</a>
-  </footer>
+  <h1 class="site-name">{{ site.Params.author }}</h1>
+  <p class="nav">
+    [ <a href="{{ site.Params.homepage }}">Home</a>
+    | <a href="{{ "/" | relURL }}">Blog</a>
+    | <a href="{{ "index.xml" | relURL }}">RSS</a> ]
+  </p>
+  <hr>
+  {{ block "main" . }}{{ end }}
+  <hr>
+  <p class="footer">
+    Contact: joao [AT] diogoduarte [DOT] pt<br>
+    Last updated: {{ site.Lastmod.Format "2 January 2006" }}
+  </p>
 </body>
 </html>

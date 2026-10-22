@@ -1,8 +1,6 @@
 {{ define "main" }}
-<article class="post">
-  <h1>{{ .Title }}</h1>
-  <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
-  {{ .Content }}
-</article>
-<p class="back"><a href="{{ "/" | relURL }}">← All posts</a></p>
+<h2 class="post-title">{{ .Title }}</h2>
+<p class="date"><i>{{ .Date.Format "2 January 2006" }}</i></p>
+{{ .Content }}
+<p><a href="{{ "/" | relURL }}">&lt;&lt; Back to all posts</a></p>
 {{ end }}
