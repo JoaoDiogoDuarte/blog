@@ -40,9 +40,14 @@ Here $\ell$ is the security parameter, which for now we assume to be a length, a
 PPT means that $\mathcal{A}$ runs in probabilistic polynomial time in $\ell$, and $\nu_{\mathcal{A}}$ is a negligible function (one that eventually drops below $1/p(\ell)$ for every polynomial $p$), which may depend on $\mathcal{A}$.
 $G^{\mathcal{A}(\cdot)}$ denotes the game run with $\mathcal{A}$ started on the given inputs, plus whatever the game itself hands it (keys, challenges, oracle answers).
 
+Careful, though: swapping two "for all"s on its own changes nothing, since $\forall \mathcal{A}\, \forall \ell$ and $\forall \ell\, \forall \mathcal{A}$ say exactly the same thing.
+What really moves is the "there exists" hiding in the bound.
+In the concrete setting $\varepsilon(t)$ is fixed before we pick $\mathcal{A}$, so one bound has to hold for every adversary at once.
+In the uniform setting $\nu_{\mathcal{A}}$ comes after $\mathcal{A}$, so it only has to work for that one adversary, and since being negligible only constrains large $\ell$, it can be as bad as it likes on finitely many parameters.
+
 In the concrete setting we fix $\ell$ first and only then quantify over the adversary, so the adversary may depend on $\ell$.
 One can think of such a non-uniform adversary as a fixed machine together with an advice string $a_\ell$ that depends on $\ell$.
-In the uniform setting the order is reversed, as we fix the adversary's code once, and it must then work for every security parameter.
+In the uniform setting we instead fix the adversary's code once, and the same code then runs on every security parameter.
 A uniform adversary is therefore a non-uniform one whose advice does not depend on the security parameter.
 It still has a constant amount of advice, namely whatever is written into its code.
 
@@ -76,7 +81,7 @@ $$
 \Pr\big[\mathsf{Fixed}_H(\mathcal{A}) \Rightarrow 1\big] \le \text{small}
 $$
 
-This statement is **false**!
+This statement is **false**! (At least once $t$ is big enough to print two short strings, and "small" means anything below $1$.)
 Since $H$ maps infinitely many inputs to finitely many outputs, a collision $(c_1, c_2)$ must exist, and in fact all but at most $2^n$ inputs collide with some other input.
 Note that $H$ is fixed before we quantify over $\mathcal{A}$.
 So there is an $\mathcal{A}$ with that collision written into it, namely the one that returns $(c_1, c_2)$.
@@ -115,9 +120,14 @@ $$
 
 This statement is potentially true!
 $\mathcal{A}$ is fixed before $\ell$.
-It would need a collision for every $\ell$ written into finitely many bits of code.
-It can hold a few, but for large $\ell$ it has to actually find them, in polynomial time.
+To break the definition it has to win with probability at least $1/p(\ell)$, for some polynomial $p$, on infinitely many $\ell$, but finitely many bits of code can only hold finitely many collisions.
+Its code could contain a rule for producing collisions instead of a list, but then that rule is a collision-finding algorithm, and it has to run in polynomial time.
 Hsiao and Reyzin make exactly this point in a footnote [HR04], noting that such a function can only be collision resistant against uniform adversaries.
+
+The flip side is that the definition says nothing about any particular $\ell$.
+Take an $\mathcal{A}$ that prints a stored collision when $\ell = 256$ and gives up otherwise.
+It wins with probability $1$ at $\ell = 256$ and $0$ everywhere else, which is negligible.
+So a family can satisfy the definition and still be completely broken at $\ell = 256$, the one parameter we actually use; $\nu_{\mathcal{A}}$, chosen after $\mathcal{A}$, can simply be $1$ there.
 
 For a fixed-output-length function like SHA-256 there is no $\ell$ to grow.
 So the uniform option doesn't exist, and we are back in the first case.
@@ -126,6 +136,8 @@ Every failure above has the same shape, namely that $H$ is fixed, so a collision
 ## Putting something after the adversary
 
 The standard fix, going back to Damgård [Dam87], is to make the hash depend on something chosen *after* the adversary is fixed, such as a key [RoSh04].
+Here "after" is about the quantifiers, not the clock: the key is sampled independently of everything written into the adversary.
+It is not secret, though, as the adversary gets $k$ as input.
 
 $$
 \begin{array}{l}
@@ -141,8 +153,10 @@ $$
 \Pr\big[\mathsf{Keyed}_H(\mathcal{A}) \Rightarrow 1\big] \le \varepsilon(t)
 $$
 
-The adversary can still have collisions written into it, but only for about $t / 2n$ keys.
+The adversary can still have collisions written into it, say a table of collisions for $m$ different keys, but that table only helps with probability $m/|\mathcal{K}|$, which is tiny for a large key space.
 The random key turns "a collision exists" into "you need a collision for *this* key".
+This does not make $H_k$ secure by itself: a silly family like $H_k(x) = H(x)$, which ignores its key, is still broken by one stored collision.
+What the key buys us is a definition that can actually be true, so that a proof or an assumption has something to say.
 
 This is also why the EasyCrypt SHA-3 result [ABB+19] is meaningful.
 The theorem says that for every adversary with oracle access to a truly random permutation $P$ and to SHA3-$x$ instantiated with $P$, making queries of total cost at most $\sigma$, the following holds.
@@ -153,6 +167,7 @@ $$
 $$
 
 The permutation $P$ is sampled inside the game, after the adversary is fixed, so it plays the role of the key.
+Unlike the key, though, the adversary never sees all of $P$; it can only query it.
 Of course, the real SHA3-$x$ uses one fixed permutation (Keccak-$f$[1600]), so for the actual hash function the hard-coded adversary is back and Hsiao and Reyzin's sentence still applies.
 The theorem is meaningful because it lives in the ideal permutation model; what happens when the adversary may preprocess $P$ is studied in [CDG18].
 
@@ -182,7 +197,7 @@ This reminds me of how we deal with trivial wins in IND-CCA [RaSi91, BDPR98].
 There, we handle them directly in the code of the game.
 An adversary could come preloaded with some decryption, but this is not a problem.
 The key, the challenge bit and the encryption randomness are all sampled after the adversary is fixed.
-So nothing it carries in its code can tell it which message was encrypted.
+So its code cannot be tailored to this particular key or challenge; whether it can still tell which message was encrypted is exactly what the security proof has to rule out.
 Two trivial wins are left, and the game guards against both: the two challenge messages must have the same length, since ciphertexts usually leak the length, and the decryption oracle refuses to decrypt the challenge ciphertext itself.
 So between the randomness and the guards, the game removes every trivial win.
 
@@ -194,10 +209,12 @@ Adding a key is exactly the move that gives the collision game what IND-CCA alre
 ## What actually works
 
 The fixes that do work avoid excluding anyone.
-The first is to put something random after the adversary, such as a key or an ideal permutation, so that a stored collision is useless.
+The first is to put something random after the adversary, such as a key or an ideal permutation, so that a stored collision is (almost certainly) useless.
 
 The second is to weaken what counts as a win, as in multi-collision resistance [BKP18].
-In that setting, an adversary only wins by finding more colliding inputs than its own code could store.
+There the hash is keyless, though still indexed by a security parameter, so this is not SHA-256 at one fixed length.
+An adversary only wins by finding considerably more mutually colliding inputs than it has bits of advice.
+The intuition is that it cannot simply have them all written in, but this is an assumption, not a counting argument: for iterated hashes, Joux's multicollisions [Jou04] turn a handful of stored collisions into exponentially many colliding inputs.
 
 Rogaway, in [Rog06], observes that common hash functions are keyless, while our formal definitions of collision resistance are keyed.
 His fix is to stop trying to directly calculate a proper collision resistance bound for a fixed $H$.
@@ -254,6 +271,7 @@ Since I am someone who thinks better by talking, I also used the chat function a
 - [Gol01] O. Goldreich. Foundations of Cryptography, Volume 1: Basic Tools. Cambridge University Press, 2001. Available at <https://doi.org/10.1017/CBO9780511546891>.
 - [HR04] C.-Y. Hsiao, L. Reyzin. Finding Collisions on a Public Road, or Do Secure Hash Functions Need Secret Coins? CRYPTO 2004, LNCS 3152, pp. 92–105. Available at <https://doi.org/10.1007/978-3-540-28628-8_6>.
 - [IR89] R. Impagliazzo, S. Rudich. Limits on the Provable Consequences of One-Way Permutations. STOC 1989, pp. 44–61. Available at <https://doi.org/10.1145/73007.73012>.
+- [Jou04] A. Joux. Multicollisions in Iterated Hash Functions. Application to Cascaded Constructions. CRYPTO 2004, LNCS 3152, pp. 306–316. Available at <https://doi.org/10.1007/978-3-540-28628-8_19>.
 - [KL80] R. M. Karp, R. J. Lipton. Some Connections between Nonuniform and Uniform Complexity Classes. STOC 1980, pp. 302–309. Available at <https://doi.org/10.1145/800141.804678>.
 - [KL20] J. Katz, Y. Lindell. Introduction to Modern Cryptography, 3rd edition. Chapman & Hall/CRC, 2020. Available at <https://www.cs.umd.edu/~jkatz/imc.html>.
 - [RaSi91] C. Rackoff, D. R. Simon. Non-Interactive Zero-Knowledge Proof of Knowledge and Chosen Ciphertext Attack. CRYPTO 1991, LNCS 576, pp. 433–444. Available at <https://doi.org/10.1007/3-540-46766-1_35>.
