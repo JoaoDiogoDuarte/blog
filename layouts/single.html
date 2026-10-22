@@ -1,6 +1,6 @@
 {{ define "main" }}
 <h2 class="post-title">{{ .Title }}</h2>
 <p class="date"><i>{{ .Date.Format "2 January 2006" }}</i></p>
-{{ .Content }}
+{{ partial "cite.html" .Content }}
 <p><a href="{{ "/" | relURL }}">&lt;&lt; Back to all posts</a></p>
 {{ end }}

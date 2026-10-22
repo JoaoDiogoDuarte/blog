@@ -1,0 +1,11 @@
+{{- /* Turns citations like [HR04] or [GM84, KL20] into links to the matching
+   reference. A reference is a list item that starts with its key, e.g.
+   "- [HR04] C.-Y. Hsiao, ..."; it gets id="ref-HR04". The entry's own
+   bracket is written as &#91; so the citation pass below skips it. */ -}}
+{{- $key := `[A-Z][A-Za-z]*\+?\d{2}` -}}
+{{- $c := replaceRE (printf `<li>(\s*<p>)?\[(%s)\]` $key) `<li id="ref-$2">$1&#91;$2]` . -}}
+{{- /* Each pass links every other key of a multi-key citation, so repeat. */ -}}
+{{- range seq 4 -}}
+  {{- $c = replaceRE (printf `(\[|, )(%s)(\]|,)` $key) `$1<a href="#ref-$2">$2</a>$3` $c -}}
+{{- end -}}
+{{- $c | safeHTML -}}

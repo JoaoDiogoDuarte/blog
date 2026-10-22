@@ -58,3 +58,7 @@ li { margin: 0.3em 0; }
 /* Post title outranks the post's own ## section headings. */
 .post-title { font-size: 1.8em; line-height: 1.2; }
 h2 { font-size: 1.4em; }
+
+/* Jumping to a reference from a citation highlights it. */
+li:target { background: #ffff99; }
+li a { overflow-wrap: anywhere; }

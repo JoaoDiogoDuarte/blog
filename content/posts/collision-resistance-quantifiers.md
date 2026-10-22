@@ -23,25 +23,24 @@ It is about how quantifiers always seem to introduce irritating, nuanced pain po
 
 ## Security models
 
-We have three main flavours of security proofs, those done in the asymptotic uniform setting [GM84, KL20], those done in the asymptotic non-uniform setting [Gol01], and those done in the concrete setting [BKR00, BDJR97].
+We have two main flavours of security proofs, those done in the asymptotic uniform setting [GM84, KL20] and those done in the concrete setting [BKR00, BDJR97].
+There is also an asymptotic non-uniform setting [Gol01], but we don't really use it here.
 In my opinion, the difference between these notions lies almost entirely in the order of the quantifiers.
 
 $$
 \begin{array}{lll}
 \textbf{Asymptotic Uniform:} & \forall \mathcal{A}\ \forall \ell &
   \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] = \mathsf{negl}(\ell) \\[6pt]
-\textbf{Asymptotic Non-uniform:} & \forall \ell\ \forall \mathcal{A}_\ell,\ |\mathcal{A}_\ell| \le p(\ell) &
-  \Pr\big[\,G^{\mathcal{A}_\ell(1^\ell)}(1^\ell) \Rightarrow 1\,\big] = \mathsf{negl}(\ell) \\[6pt]
 \textbf{Concrete:} & \text{fix } \ell,\ \forall \mathcal{A},\ |\mathcal{A}| \le t &
   \Pr\big[\,G^{\mathcal{A}} \Rightarrow 1\,\big] \le \varepsilon(t)
 \end{array}
 $$
 
-Here $|\mathcal{A}|$ measures the adversary's size and running time together, including anything hard-coded into its code.
+Here $\ell$ is the security parameter, which for now we assume to be a length, and $|\mathcal{A}|$ measures the adversary's size and running time together, including anything hard-coded into its code.
 $G^{\mathcal{A}(\cdot)}$ denotes the game run with $\mathcal{A}$ started on the given inputs, plus whatever the game itself hands it (keys, challenges, oracle answers).
 
-In the non-uniform setting we quantify first over the security parameter and then over the adversary.
-One can think of $\mathcal{A}_\ell$ as a fixed machine together with an advice string $a_\ell$ that depends on $\ell$.
+In the concrete setting we fix $\ell$ first and only then quantify over the adversary, so the adversary may depend on $\ell$.
+One can think of such a non-uniform adversary as a fixed machine together with an advice string $a_\ell$ that depends on $\ell$.
 In the uniform setting the order is reversed, as we fix the adversary's code once, and it must then work for every security parameter.
 A uniform adversary is therefore a non-uniform one whose advice does not depend on the security parameter.
 It still has a constant amount of advice, namely whatever is written into its code.
@@ -94,16 +93,16 @@ $$
 \end{array}
 $$
 
-In the asymptotic *non-uniform* setting, we have the following.
+In the *concrete* setting, where $\ell$ is fixed, we have the following.
 
 $$
-\forall \ell\ \forall \mathcal{A}_\ell,\ |\mathcal{A}_\ell| \le p(\ell),\quad
-\Pr\big[\mathsf{Var}_H^\ell(\mathcal{A}_\ell) \Rightarrow 1\big] = \mathsf{negl}(\ell)
+\forall \mathcal{A},\ |\mathcal{A}| \le t,\quad
+\Pr\big[\mathsf{Var}_H^\ell(\mathcal{A}) \Rightarrow 1\big] \le \varepsilon(t)
 $$
 
 Again, this is **false**.
-$\mathcal{A}_\ell$ is chosen after $\ell$, so it can have a collision for $H(\cdot, 1^\ell)$ written into it.
-That collision has size $O(\ell)$, well within the polynomial bound.
+$\mathcal{A}$ is chosen after $\ell$, so it can have a collision for $H(\cdot, 1^\ell)$ written into it.
+That collision has size $O(\ell)$, well within the bound $t$.
 This is annoying!
 
 Finally, let us consider the asymptotic *uniform* case.
@@ -236,27 +235,27 @@ Since I am someone who thinks better by talking, I also used the chat function a
 
 ## References
 
-- [AB09] S. Arora, B. Barak. Computational Complexity: A Modern Approach. Cambridge University Press, 2009.
-- [ABB+19] J. B. Almeida, C. Baritel-Ruet, M. Barbosa, G. Barthe, F. Dupressoir, B. Grégoire, V. Laporte, T. Oliveira, A. Stoughton, P.-Y. Strub. Machine-Checked Proofs for Cryptographic Standards: Indifferentiability of Sponge and Secure High-Assurance Implementations of SHA-3. CCS 2019.
-- [BDJR97] M. Bellare, A. Desai, E. Jokipii, P. Rogaway. A Concrete Security Treatment of Symmetric Encryption. FOCS 1997.
-- [BDPR98] M. Bellare, A. Desai, D. Pointcheval, P. Rogaway. Relations Among Notions of Security for Public-Key Encryption Schemes. CRYPTO 1998.
-- [BGHZ11] G. Barthe, B. Grégoire, S. Heraud, S. Zanella-Béguelin. Computer-Aided Security Proofs for the Working Cryptographer. CRYPTO 2011.
-- [BKP18] N. Bitansky, Y. T. Kalai, O. Paneth. Multi-Collision Resistance: A Paradigm for Keyless Hash Functions. STOC 2018.
-- [BKR00] M. Bellare, J. Kilian, P. Rogaway. The Security of the Cipher Block Chaining Message Authentication Code. Journal of Computer and System Sciences 61(3), 2000. (Preliminary version at CRYPTO 1994.)
-- [BL13] D. J. Bernstein, T. Lange. Non-uniform Cracks in the Concrete: The Power of Free Precomputation. ASIACRYPT 2013.
-- [CDG18] S. Coretti, Y. Dodis, S. Guo. Non-Uniform Bounds in the Random-Permutation, Ideal-Cipher, and Generic-Group Models. CRYPTO 2018.
-- [Dam87] I. Damgård. Collision Free Hash Functions and Public Key Signature Schemes. EUROCRYPT 1987.
-- [DGK17] Y. Dodis, S. Guo, J. Katz. Fixing Cracks in the Concrete: Random Oracles with Auxiliary Input, Revisited. EUROCRYPT 2017.
-- [GB08] S. Goldwasser, M. Bellare. Lecture Notes on Cryptography. 2008.
-- [GM84] S. Goldwasser, S. Micali. Probabilistic Encryption. Journal of Computer and System Sciences 28(2), 1984.
-- [Gol01] O. Goldreich. Foundations of Cryptography, Volume 1: Basic Tools. Cambridge University Press, 2001.
-- [HR04] C.-Y. Hsiao, L. Reyzin. Finding Collisions on a Public Road, or Do Secure Hash Functions Need Secret Coins? CRYPTO 2004.
-- [IR89] R. Impagliazzo, S. Rudich. Limits on the Provable Consequences of One-Way Permutations. STOC 1989.
-- [KL80] R. M. Karp, R. J. Lipton. Some Connections between Nonuniform and Uniform Complexity Classes. STOC 1980.
-- [KL20] J. Katz, Y. Lindell. Introduction to Modern Cryptography, 3rd edition. CRC Press, 2020.
-- [RaSi91] C. Rackoff, D. R. Simon. Non-Interactive Zero-Knowledge Proof of Knowledge and Chosen Ciphertext Attack. CRYPTO 1991.
-- [Rog06] P. Rogaway. Formalizing Human Ignorance: Collision-Resistant Hashing without the Keys. VIETCRYPT 2006.
-- [RoSh04] P. Rogaway, T. Shrimpton. Cryptographic Hash-Function Basics: Definitions, Implications, and Separations for Preimage Resistance, Second-Preimage Resistance, and Collision Resistance. FSE 2004.
-- [RTV04] O. Reingold, L. Trevisan, S. Vadhan. Notions of Reducibility between Cryptographic Primitives. TCC 2004.
-- [Sim98] D. R. Simon. Finding Collisions on a One-Way Street: Can Secure Hash Functions Be Based on General Assumptions? EUROCRYPT 1998.
-- [Unr07] D. Unruh. Random Oracles and Auxiliary Input. CRYPTO 2007.
+- [AB09] S. Arora, B. Barak. Computational Complexity: A Modern Approach. Cambridge University Press, 2009. Available at <https://theory.cs.princeton.edu/complexity/>.
+- [ABB+19] J. B. Almeida, C. Baritel-Ruet, M. Barbosa, G. Barthe, F. Dupressoir, B. Grégoire, V. Laporte, T. Oliveira, A. Stoughton, P.-Y. Strub. Machine-Checked Proofs for Cryptographic Standards: Indifferentiability of Sponge and Secure High-Assurance Implementations of SHA-3. ACM CCS 2019, pp. 1607–1622. Available at <https://doi.org/10.1145/3319535.3363211>.
+- [BDJR97] M. Bellare, A. Desai, E. Jokipii, P. Rogaway. A Concrete Security Treatment of Symmetric Encryption. FOCS 1997, pp. 394–403. Available at <https://doi.org/10.1109/SFCS.1997.646128>.
+- [BDPR98] M. Bellare, A. Desai, D. Pointcheval, P. Rogaway. Relations Among Notions of Security for Public-Key Encryption Schemes. CRYPTO 1998, LNCS 1462, pp. 26–45. Available at <https://doi.org/10.1007/BFb0055718>.
+- [BGHZ11] G. Barthe, B. Grégoire, S. Heraud, S. Zanella-Béguelin. Computer-Aided Security Proofs for the Working Cryptographer. CRYPTO 2011, LNCS 6841, pp. 71–90. Available at <https://doi.org/10.1007/978-3-642-22792-9_5>.
+- [BKP18] N. Bitansky, Y. T. Kalai, O. Paneth. Multi-Collision Resistance: A Paradigm for Keyless Hash Functions. STOC 2018, pp. 671–684. Available at <https://doi.org/10.1145/3188745.3188870>.
+- [BKR00] M. Bellare, J. Kilian, P. Rogaway. The Security of the Cipher Block Chaining Message Authentication Code. Journal of Computer and System Sciences 61(3), pp. 362–399, 2000. (Preliminary version at CRYPTO 1994.) Available at <https://doi.org/10.1006/jcss.1999.1694>.
+- [BL13] D. J. Bernstein, T. Lange. Non-uniform Cracks in the Concrete: The Power of Free Precomputation. ASIACRYPT 2013, LNCS 8270, pp. 321–340. Available at <https://doi.org/10.1007/978-3-642-42045-0_17>.
+- [CDG18] S. Coretti, Y. Dodis, S. Guo. Non-Uniform Bounds in the Random-Permutation, Ideal-Cipher, and Generic-Group Models. CRYPTO 2018, LNCS 10991, pp. 693–721. Available at <https://doi.org/10.1007/978-3-319-96884-1_23>.
+- [Dam87] I. Damgård. Collision Free Hash Functions and Public Key Signature Schemes. EUROCRYPT 1987, LNCS 304, pp. 203–216. Springer, 1988.
+- [DGK17] Y. Dodis, S. Guo, J. Katz. Fixing Cracks in the Concrete: Random Oracles with Auxiliary Input, Revisited. EUROCRYPT 2017, LNCS 10211, pp. 473–495. Available at <https://doi.org/10.1007/978-3-319-56614-6_16>.
+- [GB08] S. Goldwasser, M. Bellare. Lecture Notes on Cryptography. July 2008. Available at <https://cseweb.ucsd.edu/~mihir/papers/gb.pdf>.
+- [GM84] S. Goldwasser, S. Micali. Probabilistic Encryption. Journal of Computer and System Sciences 28(2), pp. 270–299, 1984. Available at <https://doi.org/10.1016/0022-0000(84)90070-9>.
+- [Gol01] O. Goldreich. Foundations of Cryptography, Volume 1: Basic Tools. Cambridge University Press, 2001. Available at <https://doi.org/10.1017/CBO9780511546891>.
+- [HR04] C.-Y. Hsiao, L. Reyzin. Finding Collisions on a Public Road, or Do Secure Hash Functions Need Secret Coins? CRYPTO 2004, LNCS 3152, pp. 92–105. Available at <https://doi.org/10.1007/978-3-540-28628-8_6>.
+- [IR89] R. Impagliazzo, S. Rudich. Limits on the Provable Consequences of One-Way Permutations. STOC 1989, pp. 44–61. Available at <https://doi.org/10.1145/73007.73012>.
+- [KL80] R. M. Karp, R. J. Lipton. Some Connections between Nonuniform and Uniform Complexity Classes. STOC 1980, pp. 302–309. Available at <https://doi.org/10.1145/800141.804678>.
+- [KL20] J. Katz, Y. Lindell. Introduction to Modern Cryptography, 3rd edition. Chapman & Hall/CRC, 2020. Available at <https://www.cs.umd.edu/~jkatz/imc.html>.
+- [RaSi91] C. Rackoff, D. R. Simon. Non-Interactive Zero-Knowledge Proof of Knowledge and Chosen Ciphertext Attack. CRYPTO 1991, LNCS 576, pp. 433–444. Available at <https://doi.org/10.1007/3-540-46766-1_35>.
+- [Rog06] P. Rogaway. Formalizing Human Ignorance: Collision-Resistant Hashing without the Keys. VIETCRYPT 2006, LNCS 4341, pp. 211–228. Available at <https://doi.org/10.1007/11958239_14>.
+- [RoSh04] P. Rogaway, T. Shrimpton. Cryptographic Hash-Function Basics: Definitions, Implications, and Separations for Preimage Resistance, Second-Preimage Resistance, and Collision Resistance. FSE 2004, LNCS 3017, pp. 371–388. Available at <https://doi.org/10.1007/978-3-540-25937-4_24>.
+- [RTV04] O. Reingold, L. Trevisan, S. Vadhan. Notions of Reducibility between Cryptographic Primitives. TCC 2004, LNCS 2951, pp. 1–20. Available at <https://doi.org/10.1007/978-3-540-24638-1_1>.
+- [Sim98] D. R. Simon. Finding Collisions on a One-Way Street: Can Secure Hash Functions Be Based on General Assumptions? EUROCRYPT 1998, LNCS 1403, pp. 334–345. Available at <https://doi.org/10.1007/BFb0054137>.
+- [Unr07] D. Unruh. Random Oracles and Auxiliary Input. CRYPTO 2007, LNCS 4622, pp. 205–223. Available at <https://doi.org/10.1007/978-3-540-74143-5_12>.
