@@ -40,7 +40,7 @@ Here $\ell$ is the security parameter, which for now we assume to be a length, a
 PPT means that $\mathcal{A}$ runs in probabilistic polynomial time in $\ell$, and $\nu_{\mathcal{A}}$ is a negligible function (one that eventually drops below $1/p(\ell)$ for every polynomial $p$), which may depend on $\mathcal{A}$.
 $G^{\mathcal{A}(\cdot)}$ denotes the game run with $\mathcal{A}$ started on the given inputs, plus whatever the game itself hands it (keys, challenges, oracle answers).
 
-Careful, though: swapping two "for all"s on its own changes nothing, since $\forall \mathcal{A}\, \forall \ell$ and $\forall \ell\, \forall \mathcal{A}$ say exactly the same thing.
+Careful, though: swapping two "for all" quantifiers on its own changes nothing, since $\forall \mathcal{A}\, \forall \ell$ and $\forall \ell\, \forall \mathcal{A}$ say exactly the same thing.
 What really moves is the "there exists" hiding in the bound.
 In the concrete setting $\varepsilon(t)$ is fixed before we pick $\mathcal{A}$, so one bound has to hold for every adversary at once.
 In the uniform setting $\nu_{\mathcal{A}}$ comes after $\mathcal{A}$, so it only has to work for that one adversary, and since being negligible only constrains large $\ell$, it can be as bad as it likes on finitely many parameters.
