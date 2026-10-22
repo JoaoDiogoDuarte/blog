@@ -5,7 +5,7 @@ slug: collision-resistance-quantifiers
 ---
 
 One of the things I have always loved in cryptography is black-box separation results [RTV04].
-Two classic examples are the separation of Public Key Encryption (PKE) from One-way Functions (OWF) by Impagliazzo and Rudich [IR89], and the separation of Collision Resistant Hash Functions (CRHF) from One-way Permutations (OWP) by Simon [Sim98].
+Two classic examples are the separation of key agreement (and hence Public Key Encryption) from One-way Permutations (OWP) by Impagliazzo and Rudich [IR89], and the separation of Collision Resistant Hash Functions (CRHF) from OWPs by Simon [Sim98].
 After Simon's seminal paper, I started reading Hsiao and Reyzin's paper on separating public-coin CRHFs from secret-coin CRHFs [HR04], which claims on the first page that
 
 > It is easy to see there is no meaningful way to formalize the notion of collision-resistance for a single fixed-output-length hash function.
@@ -14,7 +14,7 @@ After Simon's seminal paper, I started reading Hsiao and Reyzin's paper on separ
 
 As someone who works primarily in EasyCrypt [BGHZ11], I found this strange, as I thought we had a collision resistance proof for SHA3 with output length $x$ (more on this later!).
 Theory papers are almost always asymptotic, but they split on uniformity.
-For example, Goldreich [Gol01] and Goldwasser–Bellare [GB08] default to non-uniform adversaries, while Katz–Lindell [KL20] and much of the separation literature use uniform ones.
+For example, Goldwasser and Micali's original definitions [GM84] are non-uniform, while Katz–Lindell [KL20] and most oracle separations [HR04] use uniform ones.
 Concrete security is mostly used to analyse specific constructions [BKR00, BDJR97].
 EasyCrypt also works in the concrete setting, since its program logics produce explicit probability bounds rather than asymptotic statements.
 
@@ -23,20 +23,21 @@ It is about how quantifiers always seem to introduce irritating, nuanced pain po
 
 ## Security models
 
-We have two main flavours of security proofs, those done in the asymptotic uniform setting [GM84, KL20] and those done in the concrete setting [BKR00, BDJR97].
-There is also an asymptotic non-uniform setting [Gol01], but we don't really use it here.
+We have two main flavours of security proofs, those done in the asymptotic uniform setting [KL20] and those done in the concrete setting [BKR00, BDJR97].
+There is also an asymptotic non-uniform setting [GM84, Gol01], but we don't really use it here.
 In my opinion, the difference between these notions lies almost entirely in the order of the quantifiers.
 
 $$
 \begin{array}{lll}
-\textbf{Asymptotic Uniform:} & \forall \mathcal{A}\ \forall \ell &
-  \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] = \mathsf{negl}(\ell) \\[6pt]
+\textbf{Asymptotic Uniform:} & \forall\, \text{PPT } \mathcal{A}\ \exists \nu_{\mathcal{A}}\ \forall \ell &
+  \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] \le \nu_{\mathcal{A}}(\ell) \\[6pt]
 \textbf{Concrete:} & \text{fix } \ell,\ \forall \mathcal{A},\ |\mathcal{A}| \le t &
   \Pr\big[\,G^{\mathcal{A}} \Rightarrow 1\,\big] \le \varepsilon(t)
 \end{array}
 $$
 
 Here $\ell$ is the security parameter, which for now we assume to be a length, and $|\mathcal{A}|$ measures the adversary's size and running time together, including anything hard-coded into its code.
+PPT means that $\mathcal{A}$ runs in probabilistic polynomial time in $\ell$, and $\nu_{\mathcal{A}}$ is a negligible function (one that eventually drops below $1/p(\ell)$ for every polynomial $p$), which may depend on $\mathcal{A}$.
 $G^{\mathcal{A}(\cdot)}$ denotes the game run with $\mathcal{A}$ started on the given inputs, plus whatever the game itself hands it (keys, challenges, oracle answers).
 
 In the concrete setting we fix $\ell$ first and only then quantify over the adversary, so the adversary may depend on $\ell$.
@@ -46,7 +47,7 @@ A uniform adversary is therefore a non-uniform one whose advice does not depend 
 It still has a constant amount of advice, namely whatever is written into its code.
 
 Notice that the definition says nothing about where the advice comes from!
-It could be the result of some arbitrarily long offline preprocessing phase that compresses something very useful into polynomially many bits, such as a hard-coded collision.
+It could be the result of some arbitrarily long offline preprocessing phase that compresses something very useful into at most $t$ bits, such as a hard-coded collision.
 In the concrete setting there is only one $\ell$, so whatever advice helps at that $\ell$ can simply be written into $\mathcal{A}$.
 This is why concrete security is, in effect, non-uniform [BL13].
 
@@ -83,7 +84,7 @@ This single and annoying $\mathcal{A}$ wins with probability $1$.
 We don't need to *know* $(c_1, c_2)$, it is enough that it exists.
 
 Adding a security parameter doesn't help on its own.
-Let $H$ take $1^\ell$ as an extra input, with output length growing in $\ell$.
+Let $H$ take $1^\ell$ as an extra input and output $\ell$ bits.
 
 $$
 \begin{array}{l}
@@ -108,14 +109,14 @@ This is annoying!
 Finally, let us consider the asymptotic *uniform* case.
 
 $$
-\forall \mathcal{A}\ \forall \ell,\quad
-\Pr\big[\mathsf{Var}_H^\ell(\mathcal{A}) \Rightarrow 1\big] = \mathsf{negl}(\ell)
+\forall\, \text{PPT } \mathcal{A}\ \exists \nu_{\mathcal{A}}\ \forall \ell,\quad
+\Pr\big[\mathsf{Var}_H^\ell(\mathcal{A}) \Rightarrow 1\big] \le \nu_{\mathcal{A}}(\ell)
 $$
 
 This statement is potentially true!
 $\mathcal{A}$ is fixed before $\ell$.
 It would need a collision for every $\ell$ written into finitely many bits of code.
-It can hold a few, but for large $\ell$ it has to actually find them.
+It can hold a few, but for large $\ell$ it has to actually find them, in polynomial time.
 Hsiao and Reyzin make exactly this point in a footnote [HR04], noting that such a function can only be collision resistant against uniform adversaries.
 
 For a fixed-output-length function like SHA-256 there is no $\ell$ to grow.
@@ -152,6 +153,8 @@ $$
 $$
 
 The permutation $P$ is sampled inside the game, after the adversary is fixed, so it plays the role of the key.
+Of course, the real SHA3-$x$ uses one fixed permutation (Keccak-$f$[1600]), so for the actual hash function the hard-coded adversary is back and Hsiao and Reyzin's sentence still applies.
+The theorem is meaningful because it lives in the ideal permutation model; what happens when the adversary may preprocess $P$ is studied in [CDG18].
 
 ## Why do we even care about these adversaries?
 
@@ -180,8 +183,8 @@ There, we handle them directly in the code of the game.
 An adversary could come preloaded with some decryption, but this is not a problem.
 The key, the challenge bit and the encryption randomness are all sampled after the adversary is fixed.
 So nothing it carries in its code can tell it which message was encrypted.
-The only trivial win left is to ask the oracle to decrypt the challenge itself, which the guard in the decryption oracle refuses to answer.
-So between the randomness and the guard, the game removes every trivial win.
+Two trivial wins are left, and the game guards against both: the two challenge messages must have the same length, since ciphertexts usually leak the length, and the decryption oracle refuses to decrypt the challenge ciphertext itself.
+So between the randomness and the guards, the game removes every trivial win.
 
 The collision game for a fixed hash function has neither of these.
 Nothing is sampled after the adversary, so a preloaded collision is still valid when the game runs.
@@ -204,8 +207,9 @@ $$
 \forall \mathcal{A},\quad \mathsf{Adv}_G(\mathcal{A}) \le \mathsf{Adv}_H\big(\mathcal{B}(\mathcal{A})\big)
 $$
 
-for an explicit $\mathcal{B}$ that runs $\mathcal{A}$.
+for an explicit $\mathcal{B}$ that runs $\mathcal{A}$ and is about as efficient as $\mathcal{A}$.
 Crucially, $\mathcal{B}$ must be written down explicitly, since if the theorem only said "there exists a $\mathcal{B}$", that $\mathcal{B}$ could simply print a collision for $H$.
+It also has to be efficient, otherwise an explicit brute-force collision search would do.
 Any attack on $G$ becomes an attack on $H$, and whether anyone can attack $H$ is left as an assumption, not a theorem.
 
 The auxiliary-input line of work [Unr07, DGK17, CDG18] is another answer, as it keeps precomputation in the model but bounds the advice and counts it explicitly.
@@ -220,9 +224,9 @@ I have no good answer to this.
 
 In my interpretation, Bernstein and Lange make the same point for concrete security as a whole in "Non-uniform cracks in the concrete" [BL13].
 Concrete security usually defines $2^b$ security as the nonexistence of a good attack running in time at most $2^b$.
-They show that, under this definition, attacks well below $2^{128}$ exist against, e.g., AES-128, but these attacks rely on a huge precomputation that the definition does not account for.
-They are not realistic and pose no threat to anyone, since actually running them would be far more expensive than the usual attacks.
-But the definitions cannot separate them from real attacks, which Bernstein and Lange see as a flaw in the definitions, not in the primitives.
+They give strong evidence that, under this definition, attacks well below $2^{128}$ exist against, e.g., AES-128, but these attacks rely on a huge precomputation that the definition does not account for.
+They are not realistic and pose no threat to anyone, since finding them in the first place would cost far more than the usual attacks.
+The definition only counts the cost of running an attack, so it cannot separate them from real attacks, which Bernstein and Lange see as a flaw in the definitions, not in the primitives.
 
 Decades of work have been built on the current foundations, and changing them may not be worth it, or even possible (both in a social and a mathematical sense).
 What I take away is that these quirks are worth understanding.
@@ -246,7 +250,6 @@ Since I am someone who thinks better by talking, I also used the chat function a
 - [CDG18] S. Coretti, Y. Dodis, S. Guo. Non-Uniform Bounds in the Random-Permutation, Ideal-Cipher, and Generic-Group Models. CRYPTO 2018, LNCS 10991, pp. 693–721. Available at <https://doi.org/10.1007/978-3-319-96884-1_23>.
 - [Dam87] I. Damgård. Collision Free Hash Functions and Public Key Signature Schemes. EUROCRYPT 1987, LNCS 304, pp. 203–216. Springer, 1988.
 - [DGK17] Y. Dodis, S. Guo, J. Katz. Fixing Cracks in the Concrete: Random Oracles with Auxiliary Input, Revisited. EUROCRYPT 2017, LNCS 10211, pp. 473–495. Available at <https://doi.org/10.1007/978-3-319-56614-6_16>.
-- [GB08] S. Goldwasser, M. Bellare. Lecture Notes on Cryptography. July 2008. Available at <https://cseweb.ucsd.edu/~mihir/papers/gb.pdf>.
 - [GM84] S. Goldwasser, S. Micali. Probabilistic Encryption. Journal of Computer and System Sciences 28(2), pp. 270–299, 1984. Available at <https://doi.org/10.1016/0022-0000(84)90070-9>.
 - [Gol01] O. Goldreich. Foundations of Cryptography, Volume 1: Basic Tools. Cambridge University Press, 2001. Available at <https://doi.org/10.1017/CBO9780511546891>.
 - [HR04] C.-Y. Hsiao, L. Reyzin. Finding Collisions on a Public Road, or Do Secure Hash Functions Need Secret Coins? CRYPTO 2004, LNCS 3152, pp. 92–105. Available at <https://doi.org/10.1007/978-3-540-28628-8_6>.
