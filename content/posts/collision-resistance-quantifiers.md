@@ -230,18 +230,9 @@ The second is to ask more of the adversary before it counts as a win, as in mult
 In that setting, the hash can be keyless and the adversary can have advice, but it only wins by finding more inputs with the same hash than its advice could store.
 This is a weaker notion, but one that makes sense for a keyless function.
 
-The third is Rogaway's [Rog06], who observes that common hash functions are keyless, while our formal definitions of collision resistance are keyed.
-His fix is to stop trying to directly calculate a proper collision resistance bound for a fixed $H$.
-Instead, when a cryptosystem $G$ is built from $H$, we prove a relative bound
-
-$$
-\forall \mathcal{A},\quad \mathsf{Adv}_G(\mathcal{A}) \le \mathsf{Adv}_H\big(\mathcal{R}^{\mathcal{A}}\big)
-$$
-
-for a reduction $\mathcal{R}$ that is written down explicitly in the proof and runs $\mathcal{A}$, so that $\mathcal{R}^{\mathcal{A}}$ is about as efficient as $\mathcal{A}$.
-Notice that $\mathcal{R}$ is not quantified at all.
-What the theorem really gives is a sort of "recipe", so whoever knows an attack on $G$ can run $\mathcal{R}$ on it and get an attack on $H$.
-Whether anyone can attack $H$ is then left as an assumption, not a theorem.
+The third is Rogaway's [Rog06], who accepts that a collision finder for a fixed $H$ always exists, and builds on the fact that nobody knows it.
+When a cryptosystem $G$ is built from an unkeyed $H$, he never states a collision resistance bound for $H$, and instead gives an explicit reduction that turns any attack on $G$ into a collision finder for $H$.
+So whether $H$ is collision resistant becomes an informal assumption about what people know, which can change over time, as it did for SHA-1, while we still trust SHA3-256.
 
 ## Advice can still help adversaries
 
