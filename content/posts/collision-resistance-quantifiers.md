@@ -257,6 +257,8 @@ Decades of work have been built on the current foundations, and changing them ma
 What I take away is that these quirks are worth understanding.
 They decide what a security theorem actually says, and that is easy to lose sight of.
 
+*A short follow-up on what our security theorems actually state is [here]({{< relref "we-prove-more-than-we-state.md" >}}).*
+
 ## AI Usage
 
 I used Claude Opus 5.5 on high effort to format the text and references and to proofread this.
