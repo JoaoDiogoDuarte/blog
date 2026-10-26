@@ -19,7 +19,7 @@
   <h1 class="site-name">{{ site.Params.author }}</h1>
   <p class="nav">
     [ <a href="{{ site.Params.homepage }}">Home</a>
-    | <a href="{{ "/" | relURL }}">Blog</a>
+    | <a href="{{ site.Home.RelPermalink }}">Blog</a>
     | <a href="{{ "index.xml" | relURL }}">RSS</a> ]
   </p>
   <hr>
