@@ -120,11 +120,26 @@ In C1 and C2 the reduction is fixed before the hash function, so it has to turn 
 Rogaway also asks for the reduction to be given explicitly in the proof, so that the statement can be read as being about what people know.
 That is what they mean by formalising human ignorance, since the statement tells us how to get a collision from an attack, while whether anyone can find one is left to what we know.
 
+### Which $\varepsilon$ do we believe?
+
+In practice we use C0 and C2 by plugging in a number $\varepsilon$ that we believe bounds the advantage of collision finders running in time $t'$ (Appendix A writes this out).
+In C0, $\varepsilon$ has to bound every such collision finder, printer included, so for an unkeyed $H$ the only true bound is $\varepsilon = 1$.
+In C2 (and C1), it only has to bound $\mathcal{C}^{\mathcal{A}}$, which can be built whenever $\mathcal{A}$ can.
+Better collision finders may exist, the printer among them, but the theorem never mentions them, so we can use what we actually believe for SHA3-256, namely that nobody can *build* a collision finder in time $t'$ with advantage more than $\varepsilon$.
+
+In that sense, $\mathcal{C}^{\mathcal{A}}$ is a lower bound that we never get to use.
+If someone could build a good $\mathcal{A}$ against $\Pi^H$, they could build $\mathcal{C}^{\mathcal{A}}$ too, which we believe nobody can, so the reduction shows not that no good adversary exists, but that we cannot build one.
+That $\varepsilon$ is itself not proved, though, and for SHA3-256 it comes from the cost of the best known attacks, so the explicit reduction does not remove the conjecture, it only makes it a conjecture about what people can build.
+
 ## Closing thoughts
 
 Is any of this a real problem today?
 For the proofs, not really, since almost every reduction we write is explicit and black-box, and I think many papers now state their theorems with the reduction named.
 For the statements, it is a reminder (at least for me) to read a theorem for what it says and not for what its proof does, especially when it mentions a single unkeyed hash function.
+
+That said, a proof can be explicit almost everywhere and still contain a non-constructive step.
+A common one is coin-fixing, where the proof shows that some choice of the reduction's random coins works well and hardwires it, without saying how to find it.
+Then $\mathcal{C}^{\mathcal{A}}$ can no longer be built from $\mathcal{A}$, the argument about which $\varepsilon$ we believe breaks down, and we are back to needing a bound over every collision finder in time $t'$, printer included.
 
 After the references, you can find some appendices about how these statements are proved, directly with and without an explicit reduction and by contrapositive, and how Rogaway's forms relate to other formal notions of reductions.
 
