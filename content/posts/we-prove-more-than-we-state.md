@@ -59,7 +59,6 @@ Putting $\forall H$ in front does not help, since the printer is allowed to depe
 Rogaway notes that this is how results have traditionally been stated, and that the proof is usually constructive even when the statement is not.
 
 They note that a neat example of this occurrence is via Stinson [Sti06].
-Stinson works with a hash function $f \colon X \to Y$ with $|X| = N$ and $|Y| = M$, where an $(\varepsilon, q)$ algorithm succeeds with probability $\varepsilon$ using $q$ evaluations of $f$.
 
 > **Theorem 4.1.** Let $f \colon X \to Y$ be any hash function. If there exists an $(\varepsilon, q)$ algorithm that solves Second preimage for the hash function $f$, there exists an $(\varepsilon, q)$ algorithm that solves Collision for the hash function $f$.
 
