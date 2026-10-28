@@ -106,7 +106,7 @@ Clearly, C2 is the stronger statement, and $\text{C2} \implies \text{C1} \implie
 Interestingly enough, Stinson's paper has a statement of this kind as well.
 Stinson's Algorithm 4.1 turns a preimage finder into a collision finder, calling it only as a subroutine.
 
-> **Corollary 4.4.** Let $f \colon X \to Y$ be a hash function, and suppose that FindPreimage is an $(\varepsilon, q)$ algorithm that solves Preimage for the hash function $f$ with probability $\varepsilon$ for every $y \in Y$. Then Algorithm 4.1 is an $(\varepsilon', q + 2)$ algorithm that solves Collision for the hash function $f$, where $\varepsilon' = \varepsilon (1 - M/N)$.
+> **Corollary 4.4.** Let $f \colon X \to Y$ be a hash function, and suppose that FindPreimage is an $(\varepsilon, q)$ algorithm that solves Preimage for the hash function $f$ with probability $\varepsilon$ for every $y \in Y$. Then Algorithm 4.1 is an $(\varepsilon', q + 2)$ algorithm that solves Collision for the hash function $f$, where $\varepsilon' = \varepsilon (1 - |Y|/|X|)$.
 
 Here the statement names the reduction instead of just asserting that some collision finder exists.
 Theorem 4.1 can be rewritten the same way and we do not have to change its proof!
