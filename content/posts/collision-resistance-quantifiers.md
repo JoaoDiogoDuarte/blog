@@ -37,13 +37,22 @@ In the asymptotic uniform notion, the adversary is one fixed program, and we ask
 In the concrete notion, we first fix the security parameter to a particular value and assign a budget $t$, and then ask for one bound that covers every adversary within that budget.
 In a relatively informal way of writing this, we can express two of these security notions as
 
+**Asymptotic uniform:**
+
 $$
-\begin{array}{lll}
-\textbf{Asymptotic uniform:} & \forall\, \text{PPT}\,\, \mathcal{A}\,\, \forall c > 0\ \exists N\ \forall \ell \ge N &
-  \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c} \\[6pt]
-\textbf{Concrete (non-uniform):} & \text{fix } \ell,\ \forall a_\ell\,  \forall \mathcal{A},\ |\mathcal{A}(a_\ell)| \le t &
-  \Pr\big[\,G^{\mathcal{A}(a_\ell)}(1^\ell) \Rightarrow 1\,\big] \le \text{small}(t)
-\end{array}
+\begin{aligned}
+&\forall\, \text{PPT } \mathcal{A}\ \ \forall c > 0\ \ \exists N\ \ \forall \ell \ge N:\\
+&\qquad \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}.
+\end{aligned}
+$$
+
+**Concrete (non-uniform):**
+
+$$
+\begin{aligned}
+&\text{fix } \ell,\quad \forall a_\ell\ \forall \mathcal{A},\ |\mathcal{A}(a_\ell)| \le t:\\
+&\qquad \Pr\big[\,G^{\mathcal{A}(a_\ell)}(1^\ell) \Rightarrow 1\,\big] \le \text{small}(t).
+\end{aligned}
 $$
 
 Here $\ell$ is the security parameter, which in our examples will be the output length of a hash function, and $|\mathcal{A}(a_\ell)|$ measures the adversary's size and running time together, including its advice and anything else hard-coded into its code.
@@ -81,7 +90,10 @@ So what is "large enough"?
 Unfolding the definition of negligible makes this clearer.
 
 $$
-\forall\, \text{PPT } \mathcal{A}\ \ \forall c > 0\ \ \exists N\ \ \forall \ell \ge N \quad \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}
+\begin{aligned}
+&\forall\, \text{PPT } \mathcal{A}\ \ \forall c > 0\ \ \exists N\ \ \forall \ell \ge N:\\
+&\qquad \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}.
+\end{aligned}
 $$
 
 The threshold $N$ is chosen *after* the adversary, so this number may depend on anything preceding it in the quantifier order, including how many collisions are hard-coded into its code.
@@ -102,11 +114,12 @@ We impose no restriction on how these strings are produced.
 The definition is then
 
 $$
-\forall\, \text{PPT } \mathcal{A}\ \ \forall (a_\ell)_{\ell \ge 1} \text{ of polynomially bounded length}\ \ \forall c > 0\ \ \exists N\ \ \forall \ell \ge N,
-$$
-
-$$
-\Pr\big[\,G^{\mathcal{A}(1^\ell,a_\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}.
+\begin{aligned}
+&\forall\, \text{PPT } \mathcal{A}\ \ \forall (a_\ell)_{\ell \ge 1}
+   \text{ of polynomially bounded length}\\
+&\forall c > 0\ \ \exists N\ \ \forall \ell \ge N:\\
+&\qquad \Pr\big[\,G^{\mathcal{A}(1^\ell,a_\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}.
+\end{aligned}
 $$
 
 Notice that we quantify over the *entire sequence* of advice strings before choosing $N$.
@@ -116,11 +129,11 @@ There is another, equivalent way to write this, which makes the connection to co
 Model the adversary as a circuit $\mathcal{A}_\ell$, and bound its size by a polynomial $p(\ell)$.
 
 $$
-\forall p \text{ polynomial}\ \ \forall c > 0\ \ \exists N\ \ \forall \ell \ge N\ \ \forall \mathcal{A}_\ell,\ |\mathcal{A}_\ell| \le p(\ell),
-$$
-
-$$
-\Pr\big[\,G^{\mathcal{A}_\ell}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}.
+\begin{aligned}
+&\forall p \text{ polynomial}\ \ \forall c > 0\ \ \exists N\\
+&\forall \ell \ge N\ \ \forall \mathcal{A}_\ell,\ |\mathcal{A}_\ell| \le p(\ell):\\
+&\qquad \Pr\big[\,G^{\mathcal{A}_\ell}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}.
+\end{aligned}
 $$
 
 The interesting part is that $N$ is now chosen before the particular circuit $\mathcal{A}_\ell$.
