@@ -26,7 +26,7 @@ We consider SHA3-256 to be collision resistant, yet according to Hsiao and Reyzi
 ## Security models
 
 We have two main flavours of security proofs, those done in the asymptotic uniform setting [KL20] and those done in the concrete setting [BKR00, BDJR97].
-There is also an asymptotic non-uniform setting [GM84, Gol01], which I rarely come across, so I will not discuss it further.
+There is also an asymptotic non-uniform setting [GM84, Gol01], which I rarely come across, but which helps make the distinction clearer.
 Theory papers are almost always asymptotic, while concrete security is mostly used to analyse specific constructions.
 Let us discuss their differences.
 
@@ -35,7 +35,7 @@ Let us discuss their differences.
 In my opinion, the difference between these notions lies almost entirely in the **quantifiers**.
 In the asymptotic uniform notion, the adversary is one fixed program, and we ask how its success behaves as the security parameter grows.
 In the concrete notion, we first fix the security parameter to a particular value and assign a budget $t$, and then ask for one bound that covers every adversary within that budget.
-In a relatively informal way of writing this, we can express the two security notions as
+In a relatively informal way of writing this, we can express two of these security notions as
 
 $$
 \begin{array}{lll}
@@ -88,6 +88,53 @@ An adversary with a billion trillion collisions simply gets a larger $N$.
 
 This also means that the asymptotic definition is **not** a collection of statements, one for each $\ell$.
 The definition is a single statement about what happens as $\ell$ grows, and it says nothing about any concrete parameter, such as the first 1000 lengths, or the one you actually deploy.
+
+### Asymptotic non-uniform
+
+There is a third possibility that we have left out so far.
+What if we want asymptotic security, but still let the adversary carry advice that depends on $\ell$?
+
+Instead of a single PPT adversary $\mathcal{A}$, consider a fixed PPT machine $\mathcal{A}$ together with a sequence of advice strings $a_1, a_2, \ldots$, where $|a_\ell|$ is bounded by some polynomial in $\ell$.
+The machine stays the same, but its advice can be completely different at every length.
+We impose no restriction on how these strings are produced.
+
+The definition is then
+
+$
+\forall\, \text{PPT } \mathcal{A}\ \ \forall (a_\ell)_{\ell \ge 1} \text{ of polynomially bounded length}\ \ \forall c > 0\ \ \exists N\ \ \forall \ell \ge N,
+$
+
+$
+\Pr\big[\,G^{\mathcal{A}(1^\ell,a_\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}.
+$
+
+Notice that we quantify over the *entire sequence* of advice strings before choosing $N$.
+The adversary can have different advice at every length, but its success must eventually become negligible.
+
+There is another, equivalent way to write this, which makes the connection to concrete security much clearer.
+Model the adversary as a circuit $\mathcal{A}_\ell$, and bound its size by a polynomial $p(\ell)$.
+
+$
+\forall p \text{ polynomial}\ \ \forall c > 0\ \ \exists N\ \ \forall \ell \ge N\ \ \forall \mathcal{A}_\ell,\ |\mathcal{A}_\ell| \le p(\ell),
+$
+
+$
+\Pr\big[\,G^{\mathcal{A}_\ell}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}.
+$
+
+The interesting part is that $N$ is now chosen before the particular circuit $\mathcal{A}_\ell$.
+Once we fix a polynomial size bound, the same threshold has to work for **all** circuits within that bound, unlike uniform statements.
+
+### How does this relate to concrete?
+
+Compare this with concrete security.
+There we fix $\ell$ and a budget $t$, and want a bound that holds for every adversary within that budget.
+Here we fix a *polynomial budget* $p(\ell)$ and want a bound that eventually holds for every adversary within that budget, as $\ell$ grows.
+
+The concrete statement gives an explicit bound at a particular parameter and resource budget.
+The asymptotic statement only tells us what happens eventually, for every polynomial budget.
+So concrete and asymptotic non-uniform security are not competing ideas about whether the adversary gets advice.
+They differ in what sort of guarantee we ask for!
 
 ## Why fixing $\ell$ breaks a single hash function
 
@@ -239,14 +286,20 @@ So whether $H$ is collision resistant becomes an informal assumption about what 
 Keys are not the end of the story either.
 Bernstein and Lange show that advice which merely *helps*, such as huge precomputed tables, breaks the usual concrete security conjectures even for keyed primitives like AES-128 [BL13].
 Koblitz and Menezes argue that the non-uniform model is a poor fit for practice-oriented reductions in general [KM13a].
-Both sides of this debate, together with the auxiliary-input line of work [Unr07, DGK17, CDG18] that allows bounded advice about the sampled oracle itself, deserve their own post, so I will leave it here for now.
+The auxiliary-input line of work [Unr07, DGK17, CDG18], which allows bounded advice about the sampled oracle itself, deserves its own post.
+
+There is also a subtlety about the proofs themselves.
+Calling a security proof *uniform* or *non-uniform* can hide the fact that the adversary against the construction, the reduction that uses it, and the hardness assumption on the underlying primitive need not all be in the same model.
+A uniform reduction can use a non-uniform adversary, while a non-constructive step in a reduction can introduce advice even when the original adversary was uniform.
+That may force us to assume non-uniform hardness of the primitive just to prove uniform security of the construction!
+I discuss this distinction and why it matters for concrete security in [the follow-up post]({{< relref "we-prove-more-than-we-state.md" >}}).
 
 ## Closing thoughts
 
 What is my opinion?
 Honestly, I don't know, and I feel like I need decades of experience to begin to form one.
 On one hand, concrete security gives explicit numerical bounds, but how useful they are depends on what advice the model allows.
-On the other hand, with asymptotic uniform security, the adversary cannot carry advice that grows with the security parameter, but you lose the coefficients, and there is no guarantee that the scheme is secure at any particular parameter.
+On the other hand, neither asymptotic model gives a guarantee at any particular parameter. Uniform security rules out advice that grows with the security parameter, while non-uniform security allows it.
 
 Regardless, I think foundations are essential and should be studied by all aspiring cryptographers.
 However, I also, somewhat naively, think we should ask whether they need some altering when we cannot express something as basic as "it is hard to find a collision" without a list of caveats.
