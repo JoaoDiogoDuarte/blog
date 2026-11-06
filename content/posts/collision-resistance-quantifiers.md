@@ -39,8 +39,8 @@ In a relatively informal way of writing this, we can express two of these securi
 
 $$
 \begin{array}{lll}
-\textbf{Asymptotic uniform:} & \forall\, \text{PPT}\,\, \mathcal{A}\,\, \forall \ell &
-  \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] \le \text{neg}_{\mathcal{A}}(\ell) \\[6pt]
+\textbf{Asymptotic uniform:} & \forall\, \text{PPT}\,\, \mathcal{A}\,\, \forall c > 0\ \exists N\ \forall \ell \ge N &
+  \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c} \\[6pt]
 \textbf{Concrete (non-uniform):} & \text{fix } \ell,\ \forall a_\ell\,  \forall \mathcal{A},\ |\mathcal{A}(a_\ell)| \le t &
   \Pr\big[\,G^{\mathcal{A}(a_\ell)}(1^\ell) \Rightarrow 1\,\big] \le \text{small}(t)
 \end{array}
@@ -49,8 +49,9 @@ $$
 Here $\ell$ is the security parameter, which in our examples will be the output length of a hash function, and $|\mathcal{A}(a_\ell)|$ measures the adversary's size and running time together, including its advice and anything else hard-coded into its code.
 The advice $a_\ell$ is extra information that may depend on $\ell$, and while its size counts towards the budget $t$, the work needed to produce it is free.
 $G^{\mathcal{A}(\cdot)}$ denotes the game run with $\mathcal{A}$ started on the given inputs, plus whatever the game itself hands it (keys, challenges, oracle answers).
-The negligible function $\text{neg}_{\mathcal{A}}$ is chosen separately for each adversary, so different adversaries may get different bounds.
-This matters, since a single $\text{neg}(\ell)$ for all adversaries would result in a false statement.
+Equivalently, we could use a negligible function $\text{neg}_{\mathcal{A}}(\ell)$ chosen separately for each adversary.
+Here the threshold $N$ depends on the adversary $\mathcal{A}$ and the exponent $c$.
+This matters, since requiring a single negligible bound for all adversaries would result in a false statement.
 Notice that in the concrete case the bound $\text{small}(t)$ cannot depend on the adversary, so it has to hold for **all** adversaries of size at most $t$.
 
 ### Non-uniform
@@ -80,7 +81,7 @@ So what is "large enough"?
 Unfolding the definition of negligible makes this clearer.
 
 $$
-\forall\, \text{PPT } \mathcal{A}\ \ \forall c\ \ \exists N\ \ \forall \ell \ge N \quad \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}
+\forall\, \text{PPT } \mathcal{A}\ \ \forall c > 0\ \ \exists N\ \ \forall \ell \ge N \quad \Pr\big[\,G^{\mathcal{A}(1^\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}
 $$
 
 The threshold $N$ is chosen *after* the adversary, so this number may depend on anything preceding it in the quantifier order, including how many collisions are hard-coded into its code.
@@ -100,13 +101,13 @@ We impose no restriction on how these strings are produced.
 
 The definition is then
 
-$
+$$
 \forall\, \text{PPT } \mathcal{A}\ \ \forall (a_\ell)_{\ell \ge 1} \text{ of polynomially bounded length}\ \ \forall c > 0\ \ \exists N\ \ \forall \ell \ge N,
-$
+$$
 
-$
+$$
 \Pr\big[\,G^{\mathcal{A}(1^\ell,a_\ell)}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}.
-$
+$$
 
 Notice that we quantify over the *entire sequence* of advice strings before choosing $N$.
 The adversary can have different advice at every length, but its success must eventually become negligible.
@@ -114,13 +115,13 @@ The adversary can have different advice at every length, but its success must ev
 There is another, equivalent way to write this, which makes the connection to concrete security much clearer.
 Model the adversary as a circuit $\mathcal{A}_\ell$, and bound its size by a polynomial $p(\ell)$.
 
-$
+$$
 \forall p \text{ polynomial}\ \ \forall c > 0\ \ \exists N\ \ \forall \ell \ge N\ \ \forall \mathcal{A}_\ell,\ |\mathcal{A}_\ell| \le p(\ell),
-$
+$$
 
-$
+$$
 \Pr\big[\,G^{\mathcal{A}_\ell}(1^\ell) \Rightarrow 1\,\big] \le \ell^{-c}.
-$
+$$
 
 The interesting part is that $N$ is now chosen before the particular circuit $\mathcal{A}_\ell$.
 Once we fix a polynomial size bound, the same threshold has to work for **all** circuits within that bound, unlike uniform statements.
