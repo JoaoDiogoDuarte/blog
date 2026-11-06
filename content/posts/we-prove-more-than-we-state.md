@@ -130,6 +130,95 @@ In that sense, $\mathcal{C}^{\mathcal{A}}$ is a lower bound that we never get to
 If someone could build a good $\mathcal{A}$ against $\Pi^H$, they could build $\mathcal{C}^{\mathcal{A}}$ too, which we believe nobody can, so the reduction shows not that no good adversary exists, but that we cannot build one.
 That $\varepsilon$ is itself not proved, though, and for SHA3-256 it comes from the cost of the best known attacks, so the explicit reduction does not remove the conjecture, it only makes it a conjecture about what people can build.
 
+## Mixing the models
+
+There is one more distinction that I think is easy to lose sight of (I often do).
+When we say that a *security proof* is uniform or non-uniform, which part of the proof are we actually talking about?
+
+A typical reductionist proof has three moving parts: an adversary $\mathcal{A}$ against a construction $\Pi$, a reduction $\mathcal{R}$ that uses $\mathcal{A}$ to attack some underlying primitive $F$, and an assumption that $F$ is hard to break.
+
+Informally, we prove
+
+$
+\mathcal{A} \text{ breaks } \Pi
+\quad\Longrightarrow\quad
+\mathcal{R}^{\mathcal{A}} \text{ breaks } F.
+$
+
+Then we use the assumed security of $F$ to conclude that $\Pi$ is secure.
+
+But there are really two questions here.
+What kind of adversary $\mathcal{A}$ are we trying to rule out?
+And what kind of adversary against $F$ does the reduction produce?
+
+### Uniform reductions and non-uniform adversaries
+
+Suppose $\mathcal{R}$ is a uniform reduction, meaning that it is one fixed efficient algorithm that works for every security parameter.
+If $\mathcal{A}$ is uniform, then $\mathcal{R}^{\mathcal{A}}$ is also uniform.
+So uniform security of $F$ suffices to prove uniform security of $\Pi$.
+
+But what if $\mathcal{A}$ is non-uniform?
+
+Nothing stops us from using the same reduction.
+At each length $\ell$, it runs the corresponding circuit $\mathcal{A}_\ell$, producing another circuit that attacks $F$.
+The resulting family is generally non-uniform, even though $\mathcal{R}$ itself is uniform.
+
+Therefore, assuming the reduction has polynomial overhead and preserves non-negligible advantage, it gives us both statements:
+
+$
+\begin{array}{l}
+F \text{ uniformly secure}
+\implies \Pi \text{ uniformly secure} \\[6pt]
+F \text{ non-uniformly secure}
+\implies \Pi \text{ non-uniformly secure}.
+\end{array}
+$
+
+Notice what we **cannot** conclude: uniform security of $F$ does not, by itself, give non-uniform security of $\Pi$.
+
+This is consistent with non-uniform security implying uniform security.
+The non-uniform assumption is stronger because it rules out more adversaries.
+We cannot assume only the weaker uniform hardness of $F$ and somehow obtain the stronger conclusion about $\Pi$.
+
+### When the reduction itself needs advice
+
+Now suppose the reduction contains a non-constructive step.
+
+For example, a proof might show that some choice of random coins makes the reduction successful, and then fix those coins.
+If we cannot efficiently find a good choice, the reduction may need to hard-code a different one for every security parameter.
+Even if the original $\mathcal{A}$ is uniform, the resulting adversary against $F$ may now be non-uniform.
+
+So our proof may establish only
+
+$
+F \text{ non-uniformly secure}
+\implies \Pi \text{ uniformly secure}.
+$
+
+That is a perfectly valid theorem.
+But it is not the same theorem we would get from a uniform reduction!
+
+This is the central point of Koblitz and Menezes's *Another Look at Non-Uniformity* [KM13a].
+They argue that non-uniform reductions can be undesirable for practice-oriented security proofs, not because the mathematics is wrong, but because the **hypothesis becomes stronger too**.
+
+At first, proving security against non-uniform adversaries looks like a better result: after all, these adversaries are more powerful.
+But a reductionist theorem is conditional.
+To rule out more powerful adversaries against our construction, we might also need to assume that the underlying primitive resists more powerful adversaries.
+Worse, even proving only uniform security of the construction may require that stronger assumption if the reduction itself is non-uniform.
+
+This matters when we try to interpret the theorem concretely.
+
+Koblitz and Menezes discuss the security of NMAC/HMAC, where a coin-fixing argument leads to a non-uniform adversary against the underlying compression function [KM13a].
+They describe a distinguisher that hard-codes a favourable message and test, selected using potentially enormous preprocessing, but then needs very little work to distinguish the compression function from a random function.
+
+Such an adversary may have a much better distinguishing advantage than the best known uniform attacks.
+If we estimate the theorem's concrete security by assuming that the underlying primitive is as hard to distinguish as exhaustive key search, we may be using a bound that does not hold for the adversaries the proof actually requires us to rule out.
+
+The reduction can be correct, and yet the practical interpretation of its hypothesis can be wrong.
+
+This is not to say that non-uniform security should not be used.
+It is simply a stronger assumption, and we should be careful about what evidence supports it.
+
 ## Closing thoughts
 
 Is any of this a real problem today?
@@ -137,8 +226,8 @@ For the proofs, not really, since almost every reduction we write is explicit an
 For the statements, it is a reminder (at least for me) to read a theorem for what it says and not for what its proof does, especially when it mentions a single unkeyed hash function.
 
 That said, a proof can be explicit almost everywhere and still contain a non-constructive step.
-A common one is coin-fixing, where the proof shows that some choice of the reduction's random coins works well and hardwires it, without saying how to find it.
-Then $\mathcal{C}^{\mathcal{A}}$ can no longer be built from $\mathcal{A}$, the argument about which $\varepsilon$ we believe breaks down, and we are back to needing a bound over every collision finder in time $t'$, printer included.
+Coin-fixing is one example: the resulting reduction may need advice that we do not know how to produce, so the argument about which $\varepsilon$ we believe can break down.
+As we saw above, this is also why we need to be careful about which hardness assumption a proof actually uses.
 
 After the references, you can find some appendices about how these statements are proved, directly with and without an explicit reduction and by contrapositive, and how Rogaway's forms relate to other formal notions of reductions.
 
